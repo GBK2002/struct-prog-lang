@@ -182,6 +182,39 @@ def test_parse():
     ast2 = parse(tokens)
     assert ast1 == ast2, "parse() is not evaluating via parse_program()"
 
+def test_parse_factor_additional():
+    """
+    Additional test for parse_factor: nested parentheses with expression
+    """
+    tokens = tokenize("((2+3))")
+    ast, tokens = parse_factor(tokens)
+    assert ast == {
+        'tag': '+',
+        'left': {'tag': 'number', 'value': 2},
+        'right': {'tag': 'number', 'value': 3}
+    }
+    assert tokens[0]['tag'] == None
+
+
+def test_parse_term_additional():
+    """
+    Additional test for parse_term: chained multiplication and division
+    """
+    tokens = tokenize("8*2/4")
+    ast, tokens = parse_term(tokens)
+    # left-associative: (8*2)/4
+    assert ast == {
+        'tag': '/',
+        'left': {
+            'tag': '*',
+            'left': {'tag': 'number', 'value': 8},
+            'right': {'tag': 'number', 'value': 2}
+        },
+        'right': {'tag': 'number', 'value': 4}
+    }
+    assert tokens[0]['tag'] == None
+
+
 
 
 if __name__ == "__main__":
@@ -191,4 +224,6 @@ if __name__ == "__main__":
     test_parse_statement()
     test_parse_program()
     test_parse()
+    test_parse_factor_additional()
+    test_parse_term_additional()
     print("done.")
