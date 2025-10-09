@@ -525,6 +525,14 @@ def parse_statement(tokens):
         return parse_while_statement(tokens)
     if tag == "print":
         return parse_print_statement(tokens)
+    if tag == "gkhandig":
+        tokens = tokens[1:]
+        if tokens[0]["tag"] == ";":
+            tokens = tokens[1:]
+        return {"tag": "kentid"}, tokens
+
+    print("DEBUG parsed statement:", tag, "next token:", tokens[0])
+
     return parse_assignment_statement(tokens)
 
 def test_parse_statement():
@@ -541,18 +549,19 @@ def test_parse_statement():
 
 def parse_program(tokens):
     """
-    program = [ statement { ";" statement } ]
+    program = statement { statement }
     """
     statements = []
-    if tokens[0]["tag"]:
+    while tokens[0]["tag"] is not None:
         statement, tokens = parse_statement(tokens)
         statements.append(statement)
+        # Skip extra semicolons
         while tokens[0]["tag"] == ";":
             tokens = tokens[1:]
-            statement, tokens = parse_statement(tokens)
-            statements.append(statement)
-    assert tokens[0]["tag"] is None, f"Expected end of input at position {tokens[0]['position']}, got [{tokens[0]}]"
-    return {"tag": "program", "statements": statements}, tokens[1:]
+    assert tokens[0]["tag"] is None, f"Expected end of input at position {tokens[0]['position']}, got {tokens[0]}"
+    return {"tag": "program", "statements": statements}, tokens
+
+
 
 def test_parse_program():
     """

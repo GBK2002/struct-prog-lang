@@ -15,6 +15,7 @@ patterns = [
     [r"not","!"],
     [r"\d*\.\d+|\d+\.\d*|\d+", "number"],
     [r'"([^"]|"")*"', "string"],  # string literals
+    [r"gkhandig", "gkhandig"],   # Kent ID keyword
     [r"[a-zA-Z_][a-zA-Z0-9_]*", "identifier"],  # identifiers
     [r"\+", "+"],
     [r"\-", "-"],
